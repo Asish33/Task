@@ -6,9 +6,14 @@ import jwt, { type Secret } from "jsonwebtoken";
 import dotenv from "dotenv";
 import { userModel } from "./models/User.js";
 import middleware from "./middleware/middleware.js";
+
 export interface AuthenticatedRequest extends Request {
   user?: any;
 }
+
+
+
+
 dotenv.config();
 
 const app = express();
@@ -41,6 +46,8 @@ app.post("/signup", async (req: Request, res: Response) => {
   }
 });
 
+
+
 app.post("/login", async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
@@ -72,6 +79,8 @@ app.post("/login", async (req: Request, res: Response) => {
   }
 });
 
+
+
 app.post("/cars", middleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const body = req.body;
@@ -87,6 +96,8 @@ app.post("/cars", middleware, async (req: AuthenticatedRequest, res: Response) =
   }
 });
 
+
+
 app.get("/cars", middleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const response = await CarModel.find({
@@ -97,6 +108,8 @@ app.get("/cars", middleware, async (req: AuthenticatedRequest, res: Response) =>
     console.error("error while fetching the data" + e.message);
   }
 });
+
+
 
 app.post("/carname", middleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
@@ -113,6 +126,8 @@ app.post("/carname", middleware, async (req: AuthenticatedRequest, res: Response
   }
 });
 
+
+
 app.post("/carColor", middleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const color = req.body.color;
@@ -125,6 +140,8 @@ app.post("/carColor", middleware, async (req: AuthenticatedRequest, res: Respons
     console.error("error while fetching the cars with given color");
   }
 });
+
+
 
 app.listen(3000, () => {
   console.log("Server running on port 3000");
