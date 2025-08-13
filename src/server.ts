@@ -10,14 +10,17 @@ import middleware from "./middleware/middleware.js";
 export interface AuthenticatedRequest extends Request {
   user?: any;
 }
+const app = express();
+app.use(express.json());
+
+app.set("trust proxy", true);
 
 
-
+import { carCreateLimiter } from "./rateLimitter/rate.js";
 
 dotenv.config();
 
-const app = express();
-app.use(express.json());
+
 
 await connectDB();
 
@@ -45,8 +48,6 @@ app.post("/signup", async (req: Request, res: Response) => {
       .json({ message: "Internal server error", error: error.message });
   }
 });
-
-
 
 app.post("/login", async (req: Request, res: Response) => {
   try {
@@ -81,67 +82,79 @@ app.post("/login", async (req: Request, res: Response) => {
 
 
 
-app.post("/cars", middleware, async (req: AuthenticatedRequest, res: Response) => {
-  try {
-    const body = req.body;
-    const car = await CarModel.create({
-      ... body,
-      userId: req.user._id,
-    });
-    res.status(201).json({
-      message: "created car successfully.",
-    });
-  } catch (e: any) {
-    res.status(500).json({ message: "Error creating car", error: e.message });
+app.use(middleware);
+app.use(carCreateLimiter);
+
+
+app.post(
+  "/cars",
+  middleware,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const body = req.body;
+      const car = await CarModel.create({
+        ...body,
+        userId: req.user._id,
+      });
+      res.status(201).json({
+        message: "created car successfully.",
+      });
+    } catch (e: any) {
+      res.status(500).json({ message: "Error creating car", error: e.message });
+    }
   }
-});
+);
 
-
-
-app.get("/cars", middleware, async (req: AuthenticatedRequest, res: Response) => {
-  try {
-    const response = await CarModel.find({
-      userId:req.user._id,
-    });
-    res.json(response);
-  } catch (e: any) {
-    console.error("error while fetching the data" + e.message);
+app.get(
+  "/cars",
+  middleware,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const response = await CarModel.find({
+        userId: req.user._id,
+      });
+      res.json(response);
+    } catch (e: any) {
+      console.error("error while fetching the data" + e.message);
+    }
   }
-});
+);
 
-
-
-app.post("/carname", middleware, async (req: AuthenticatedRequest, res: Response) => {
-  try {
-    const body = req.body.carname;
-    const response = await CarModel.find({
-      model: body,
-      userId:req.user._id
-    });
-    res.json({
-      response,
-    });
-  } catch (e: any) {
-    console.error("error");
+app.post(
+  "/carname",
+  middleware,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const body = req.body.carname;
+      const response = await CarModel.find({
+        model: body,
+        userId: req.user._id,
+      });
+      res.json({
+        response,
+      });
+    } catch (e: any) {
+      console.error("error");
+    }
   }
-});
+);
 
-
-
-app.post("/carColor", middleware, async (req: AuthenticatedRequest, res: Response) => {
-  try {
-    const color = req.body.color;
-    const response = await CarModel.find({
-      color: color,
-      userId:req.user._id
-    });
-    res.json(response);
-  } catch (e) {
-    console.error("error while fetching the cars with given color");
+app.post(
+  "/carColor",
+  middleware,
+  async (req: AuthenticatedRequest, res: Response) => {
+    try {
+      const color = req.body.color;
+      const response = await CarModel.find({
+        color: color,
+        userId: req.user._id,
+      });
+      res.json(response);
+    } catch (e) {
+      console.error("error while fetching the cars with given color");
+    }
   }
-});
-
-
+);
 
 app.listen(3000, () => {
   console.log("Server running on port 3000");

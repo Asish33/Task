@@ -23,7 +23,7 @@ const middleware = async (req: Request, res: Response, next: NextFunction) => {
 
     (req as any).user = user;
 
-    console.log(user);
+    //console.log(user);
 
     next();
   } catch (error: any) {
