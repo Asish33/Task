@@ -42,27 +42,27 @@ app.post("/signup", async (req: Request, res: Response) => {
 
 app.post("/login", async (req: Request, res: Response) => {
   try {
-    const token = req.headers.token as string | undefined;
+    const token = req.headers.token?.toString();
 
     if (!token) {
-      return res.status(401).json({ message: "You are not authenticated." });
+      return res.status(401).json({ message: "Token is required" });
     }
 
     const secret = process.env.JWT_SECRET;
     if (!secret) {
-      return res.status(500).json({ message: "JWT secret is not defined." });
+      return res.status(500).json({ message: "JWT secret is not defined" });
     }
 
     const decoded = jwt.verify(token, secret as Secret) as { email: string };
-
     const userdetails = await userModel.findOne({ email: decoded.email });
+
     if (!userdetails) {
-      return res.status(404).json({ message: "User not found." });
+      return res.status(404).json({ message: "User not found" });
     }
 
-    res.status(200).json({ message: "User authenticated.", userdetails });
-  } catch (err) {
-    res.status(401).json({ message: "Invalid token.", error: err });
+    res.status(200).json({ message: "User authenticated", userdetails });
+  } catch (err: any) {
+    res.status(401).json({ message: "Invalid token", error: err.message });
   }
 });
 
