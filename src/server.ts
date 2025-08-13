@@ -6,6 +6,9 @@ import jwt, { type Secret } from "jsonwebtoken";
 import dotenv from "dotenv";
 import { userModel } from "./models/User.js";
 import middleware from "./middleware/middleware.js";
+export interface AuthenticatedRequest extends Request {
+  user?: any;
+}
 dotenv.config();
 
 const app = express();
@@ -69,10 +72,13 @@ app.post("/login", async (req: Request, res: Response) => {
   }
 });
 
-app.post("/cars", middleware, async (req: Request, res: Response) => {
+app.post("/cars", middleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const body = req.body;
-    const car = await CarModel.create(body);
+    const car = await CarModel.create({
+      ... body,
+      userId: req.user._id,
+    });
     res.status(201).json({
       message: "created car successfully.",
     });
@@ -81,20 +87,23 @@ app.post("/cars", middleware, async (req: Request, res: Response) => {
   }
 });
 
-app.get("/cars", middleware, async (req: Request, res: Response) => {
+app.get("/cars", middleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const response = await CarModel.find();
+    const response = await CarModel.find({
+      userId:req.user._id,
+    });
     res.json(response);
   } catch (e: any) {
     console.error("error while fetching the data" + e.message);
   }
 });
 
-app.post("/carname", middleware, async (req: Request, res: Response) => {
+app.post("/carname", middleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const body = req.body.carname;
     const response = await CarModel.find({
       model: body,
+      userId:req.user._id
     });
     res.json({
       response,
@@ -104,11 +113,12 @@ app.post("/carname", middleware, async (req: Request, res: Response) => {
   }
 });
 
-app.post("/carColor", middleware, async (req: Request, res: Response) => {
+app.post("/carColor", middleware, async (req: AuthenticatedRequest, res: Response) => {
   try {
     const color = req.body.color;
     const response = await CarModel.find({
       color: color,
+      userId:req.user._id
     });
     res.json(response);
   } catch (e) {

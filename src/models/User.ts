@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import { Schema, model,Types} from "mongoose";
 
 const carSchema: Schema = new Schema({
   make: { type: String, required: true },
@@ -7,6 +7,7 @@ const carSchema: Schema = new Schema({
   color: { type: String, required: true },
   price: { type: Number, required: true },
   createdAt: { type: Date, default: Date.now },
+  userId : {type : Types.ObjectId , requried:true}
 });
 
 const UserSchema: Schema = new Schema({
