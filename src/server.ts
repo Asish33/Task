@@ -18,14 +18,12 @@ app.post("/signup", async (req: Request, res: Response) => {
     const details = req.body;
 
     if (!details || !details.email || !details.password) {
-      return res
-        .status(400)
-        .json({ message: "Please provide email and password" });
+      return res.json({ message: "Please provide email and password" });
     }
 
     const existingUser = await userModel.findOne({ email: details.email });
     if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
+      return res.json({ message: "User already exists" });
     }
 
     await userModel.create(details);
@@ -103,6 +101,18 @@ app.post("/carname", middleware, async (req: Request, res: Response) => {
     });
   } catch (e: any) {
     console.error("error");
+  }
+});
+
+app.post("/carColor", middleware, async (req: Request, res: Response) => {
+  try {
+    const color = req.body.color;
+    const response = await CarModel.find({
+      color: color,
+    });
+    res.json(response);
+  } catch (e) {
+    console.error("error while fetching the cars with given color");
   }
 });
 
