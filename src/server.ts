@@ -20,6 +20,16 @@ app.post("/cars", async (req: Request, res: Response) => {
   }
 });
 
+app.get("/cars" , async(req:Request,res:Response)=>{
+  try{
+    const response = await CarModel.find();
+    res.json(response);
+  }
+  catch(e:any){
+    console.error("error while fetching the data" + e.message)
+  }
+})
+
 app.listen(3000, () => {
   console.log("Server running on port 3000");
 });
