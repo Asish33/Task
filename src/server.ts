@@ -5,6 +5,7 @@ import { CarModel } from "./models/User.js";
 import jwt, { type Secret } from "jsonwebtoken";
 import dotenv from "dotenv";
 import { userModel } from "./models/User.js";
+import middleware from "../middleware/middleware.js";
 dotenv.config();
 
 const app = express();
@@ -16,31 +17,22 @@ app.post("/signup", async (req: Request, res: Response) => {
   try {
     const details = req.body;
 
-    if (!details) {
-      return res.status(400).json({ message: "Please provide details" });
+    if (!details || !details.email || !details.password) {
+      return res
+        .status(400)
+        .json({ message: "Please provide email and password" });
     }
 
-    const secret = process.env.JWT_SECRET;
-    if (!secret) {
-      return res.status(500).json({ message: "JWT secret is not defined" });
+    const existingUser = await userModel.findOne({ email: details.email });
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists" });
     }
 
-    const checking = await userModel.findOne({
-      email: details.email,
-    });
+    await userModel.create(details);
 
-    if (checking) {
-      return res.json({
-        message: "user already exists",
-      });
-    }
-
-    const user = await userModel.create(details);
-
-    const payload = { email: user.email, id: user._id };
-    const token = jwt.sign(payload, secret);
-
-    res.json({ token });
+    res
+      .status(201)
+      .json({ message: "User created successfully. Please login." });
   } catch (error: any) {
     res
       .status(500)
@@ -74,7 +66,7 @@ app.post("/login", async (req: Request, res: Response) => {
   }
 });
 
-app.post("/cars", async (req: Request, res: Response) => {
+app.post("/cars", middleware, async (req: Request, res: Response) => {
   try {
     const body = req.body;
     const car = await CarModel.create(body);
@@ -86,7 +78,7 @@ app.post("/cars", async (req: Request, res: Response) => {
   }
 });
 
-app.get("/cars", async (req: Request, res: Response) => {
+app.get("/cars", middleware, async (req: Request, res: Response) => {
   try {
     const response = await CarModel.find();
     res.json(response);
@@ -95,7 +87,7 @@ app.get("/cars", async (req: Request, res: Response) => {
   }
 });
 
-app.post("/carname", async (req: Request, res: Response) => {
+app.post("/carname", middleware, async (req: Request, res: Response) => {
   try {
     const body = req.body.carname;
     const response = await CarModel.find({
