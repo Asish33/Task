@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
 import jwt, { type Secret, type JwtPayload } from "jsonwebtoken";
-import { userModel } from "../src/models/User.js";
+import { userModel } from "../models/User.js";
 
 dotenv.config();
 
