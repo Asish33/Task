@@ -5,7 +5,7 @@ import { CarModel } from "./models/User.js";
 import jwt, { type Secret } from "jsonwebtoken";
 import dotenv from "dotenv";
 import { userModel } from "./models/User.js";
-import middleware from "../middleware/middleware.js";
+import middleware from "./middleware/middleware.js";
 dotenv.config();
 
 const app = express();
