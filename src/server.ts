@@ -6,12 +6,15 @@ import jwt, { type Secret } from "jsonwebtoken";
 import dotenv from "dotenv";
 import { userModel } from "./models/User.js";
 import middleware from "./middleware/middleware.js";
+import cors from "cors"
 
 export interface AuthenticatedRequest extends Request {
   user?: any;
 }
 const app = express();
 app.use(express.json());
+
+app.use(cors())
 
 app.set("trust proxy", true);
 
