@@ -4,10 +4,10 @@ const carSchema: Schema = new Schema({
   make: { type: String, required: true },
   model: { type: String, required: true },
   year: { type: Number, required: true },
-  color: { type: String, required: true },
+  color: { type: String, required: true, lowercase: true },
   price: { type: Number, required: true },
   createdAt: { type: Date, default: Date.now },
-  userId : {type : Types.ObjectId , requried:true}
+  userId: { type: Types.ObjectId, requried: true },
 });
 
 const UserSchema: Schema = new Schema({
