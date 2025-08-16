@@ -118,9 +118,7 @@ app.get(
   middleware,
   async (req: AuthenticatedRequest, res: Response) => {
     try {
-      const response = await CarModel.find({
-        userId: req.user._id,
-      });
+      const response = await CarModel.find();
       res.json(response);
     } catch (e: any) {
       console.error("error while fetching the data" + e.message);
