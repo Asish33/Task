@@ -102,7 +102,6 @@ app.post(
       const body = req.body;
       const car = await CarModel.create({
         ...body,
-        userId: req.user._id,
       });
       res.status(201).json({
         message: "created car successfully.",
