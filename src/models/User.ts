@@ -15,6 +15,7 @@ const UserSchema: Schema = new Schema({
   email: { type: String, required: true, unique: true, lowercase: true },
   password: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
+  role: { type: String, default: "user" },
 });
 
 export const CarModel = model("Car", carSchema);

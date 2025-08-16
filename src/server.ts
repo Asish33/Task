@@ -72,16 +72,17 @@ app.post("/login", async (req: Request, res: Response) => {
       return res.status(500).json({ message: "JWT secret is not defined" });
     }
 
-    const payload = { id: user._id, email: user.email };
+    const payload = { id: user._id, email: user.email, role: user.role };
     const token = jwt.sign(payload, secret);
 
-    res.status(200).json({ message: "Login successful", token });
+    res.status(200).json({ message: "Login successful", token,});
   } catch (error: any) {
     res
       .status(500)
       .json({ message: "Internal server error", error: error.message });
   }
 });
+
 
 
 
@@ -94,6 +95,10 @@ app.post(
   middleware,
   async (req: AuthenticatedRequest, res: Response) => {
     try {
+      if (req.user.role !== "admin") {
+        return res.status(403).json({ message: "Access denied. Admins only." });
+      }
+
       const body = req.body;
       const car = await CarModel.create({
         ...body,
@@ -107,6 +112,7 @@ app.post(
     }
   }
 );
+
 
 app.get(
   "/cars",
