@@ -74,8 +74,8 @@ app.post("/login", async (req: Request, res: Response) => {
 
     const payload = { id: user._id, email: user.email, role: user.role };
     const token = jwt.sign(payload, secret);
-
-    res.status(200).json({ message: "Login successful", token,});
+    const role = user.role;
+    res.status(200).json({ message: "Login successful", token,role});
   } catch (error: any) {
     res
       .status(500)
