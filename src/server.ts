@@ -7,7 +7,7 @@ import dotenv from "dotenv";
 import { userModel } from "./models/User.js";
 import middleware from "./middleware/middleware.js";
 import cors from "cors"
-
+import { BookingModel } from "./models/User.js";
 export interface AuthenticatedRequest extends Request {
   user?: any;
 }
@@ -145,6 +145,33 @@ app.post(
   }
 );
 
+app.post("/book",async(req:AuthenticatedRequest,res:Response)=>{
+  try {
+    const carId = req.body.carId;
+    const userId = req.user._id;
+    const response = await BookingModel.create({
+      carId,
+      userId,
+    });
+    res.json({ response });
+  } catch (e: any) {
+    console.error("error");
+  }
+
+})
+
+app.get("/getBookings", async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const userId = req.user._id;
+
+    const bookings = await BookingModel.find({ userId });
+
+    res.json({ bookings });
+  } catch (e: any) {
+    console.error("Get bookings error:", e.message);
+    res.status(500).json({ error: "Failed to fetch bookings" });
+  }
+});
 
 
 app.listen(3000, () => {

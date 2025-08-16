@@ -18,5 +18,12 @@ const UserSchema: Schema = new Schema({
   role: { type: String, default: "user" },
 });
 
+const BookingSchema: Schema = new Schema({
+  carId: { type: Types.ObjectId, ref: "Car", required: true },
+  userId: { type: Types.ObjectId, ref: "User", required: true },
+  bookingDate: { type: Date, default: Date.now },
+});
+
 export const CarModel = model("Car", carSchema);
 export const userModel = model("user",UserSchema);
+export const BookingModel = model("Booking",BookingSchema);
