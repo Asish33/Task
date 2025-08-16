@@ -145,21 +145,7 @@ app.post(
   }
 );
 
-app.post(
-  "/carColor",
-  middleware,
-  async (req: AuthenticatedRequest, res: Response) => {
-    try {
-      const color = req.body.color;
-      const response = await CarModel.find({
-        color: color,
-      });
-      res.json(response);
-    } catch (e) {
-      console.error("error while fetching the cars with given color");
-    }
-  }
-);
+
 
 app.listen(3000, () => {
   console.log("Server running on port 3000");
