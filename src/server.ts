@@ -153,7 +153,6 @@ app.post(
       const color = req.body.color;
       const response = await CarModel.find({
         color: color,
-        userId: req.user._id,
       });
       res.json(response);
     } catch (e) {
